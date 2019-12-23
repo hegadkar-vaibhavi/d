@@ -1,0 +1,57 @@
+1  free -m
+2  sudo hostname n-ser
+3  sudo nano /etc/hostname
+	 --- remove shuhari add n-ser
+4  sudo nano /etc/hosts
+	--in second line
+		127.0.1.1       n-ser.shuhari.local     n-ser 
+5  sudo reboot
+6 sudo nano /etc/network/interfaces
+        iface ens33 inet static
+        address 192.168.1.139
+        netmask 255.255.255.0
+        gateway 192.168.1.1
+        dns-nameserver 1.1.1.1
+        dns-nameserver 8.8.8.8
+7 sudo apt-get install autoconf gcc libc6 make wget unzip apache2-utils php libgd-dev
+8  cd /tmp 
+9 wget http://192.168.1.52/sw/nagios/nagios-4.4.3.tar.gz
+   
+10 tar -zxf nagios-4.4.3.tar.gz
+11  cd nagios-4.4.3/
+12  sudo ./configure --with-httpd-conf=/etc/apache2/sites-enabled
+13 sudo make all
+14  sudo make install-groups-users
+15  sudo passwd nagios
+16 sudo usermod -a -G nagios www-data
+17  sudo getent group nagios
+18  sudo make install
+19  ls -la /usr/local/nagios
+20  sudo make install-daemoninit
+21  sudo make install-commandmode
+22  sudo make install-config
+23  ln -s /etc/apache2/sites-enabled/nagios.conf
+24  ln -s /etc/apache2/sites-enabled/0000-default.conf
+25  sudo make install-webconf
+26  sudo nano /etc/apache2/sites-enabled/nagios.conf   ---nothing change
+27 sudo a2enmod rewrite
+28 sudo a2enmod cgi
+29  sudo systemctl restart apache2
+30  sudo systemctl status apache2
+31  sudo iptables -I INPUT -p tcp --destination-port 80 -j ACCEPT
+32 sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+33  sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+34  sudo systemctl restart apache2.service
+35  sudo systemctl restart nagios
+36  sudo apt-get install autoconf gcc libc6 libmcrypt-dev make libssl-dev wget bc gawk dc build-essential snmp libnet-snmp-perl gettext
+37  wget http://192.168.1.52/sw/nagios/nagios-plugins-release-2.2.1.tar.gz 
+38  tar -zxf nagios-plugins-release-2.2.1.tar.gz
+39  cd nagios-plugins-release-2.2.1/
+40  ./tools/setup
+41  ./configure
+42  sudo make install
+43  sudo systemctl restart nagios
+44  sudo systemctl status nagios
+-----go to browser  192.168.1.139/nagios
+		username-nagiosadmin
+		password-iacsd@123
